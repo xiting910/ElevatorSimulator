@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="ElevatorSimulator.Client/ElevatorSimulator.Client.csproj" />
+  <Project Path="ElevatorSimulator.Server/ElevatorSimulator.Server.csproj" />
+  <Project Path="ElevatorSimulator.Share/ElevatorSimulator.Share.csproj" />
+  <Folder Name="/Other/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+  </Folder>
+</Solution>
