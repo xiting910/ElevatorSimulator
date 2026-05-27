@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ElevatorSimulator.Client.Core;
 
 namespace ElevatorSimulator.Client.UI;
 
@@ -30,9 +29,9 @@ internal sealed class MainForm : Form
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        ClientManager.Instance.OnElevatorStatusReceived += OnElevatorStatusReceived;
-        ClientManager.Instance.OnFloorStatusReceived += OnFloorStatusReceived;
-        ClientManager.Instance.OnDisconnected += OnDisconnected;
+        Core.ClientManager.Instance.OnElevatorStatusReceived += OnElevatorStatusReceived;
+        Core.ClientManager.Instance.OnFloorStatusReceived += OnFloorStatusReceived;
+        Core.ClientManager.Instance.OnDisconnected += OnDisconnected;
     }
 
     /// <summary>
@@ -41,7 +40,7 @@ internal sealed class MainForm : Form
     /// <param name="e">事件参数</param>
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
-        ClientManager.Instance.Dispose();
+        Core.ClientManager.Instance.Dispose();
         base.OnFormClosed(e);
     }
 

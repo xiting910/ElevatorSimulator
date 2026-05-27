@@ -67,7 +67,7 @@ internal sealed class PipeServerManager : IDisposable
                 var clientId = Guid.NewGuid().ToString("N")[..8];
 
                 // 将新连接添加到连接集合中
-                _clients.TryAdd(clientId, pipeServer);
+                _ = _clients.TryAdd(clientId, pipeServer);
 
                 // 记录日志
                 Utils.Logger.Info($"客户端已连接: {clientId}");

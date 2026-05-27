@@ -72,12 +72,12 @@ internal sealed class MainForm : Form
             RowCount = 4,
             Padding = new(10)
         };
-        tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
-        tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
-        tlp.RowStyles.Add(new(SizeType.Percent, 25F));
-        tlp.RowStyles.Add(new(SizeType.Percent, 25F));
-        tlp.RowStyles.Add(new(SizeType.Absolute, 100F));
-        tlp.RowStyles.Add(new(SizeType.Percent, 40F));
+        _ = tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
+        _ = tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 25F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 25F));
+        _ = tlp.RowStyles.Add(new(SizeType.Absolute, 100F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 40F));
 
         #region 1. 电梯状态区域
         var grpElevators = new GroupBox { Text = "电梯状态 (双击查看详情)", Dock = DockStyle.Fill };
@@ -89,11 +89,11 @@ internal sealed class MainForm : Form
             FullRowSelect = true,
             GridLines = true
         };
-        _lvElevators.Columns.Add("ID", 60);
-        _lvElevators.Columns.Add("当前楼层", 200);
-        _lvElevators.Columns.Add("运行方向", 200);
-        _lvElevators.Columns.Add("门状态", 200);
-        _lvElevators.Columns.Add("开门比例", 200);
+        _ = _lvElevators.Columns.Add("ID", 60);
+        _ = _lvElevators.Columns.Add("当前楼层", 200);
+        _ = _lvElevators.Columns.Add("运行方向", 200);
+        _ = _lvElevators.Columns.Add("门状态", 200);
+        _ = _lvElevators.Columns.Add("开门比例", 200);
         _lvElevators.MouseDoubleClick += (s, e) =>
         {
             if (_lvElevators.SelectedItems.Count > 0)
@@ -119,8 +119,8 @@ internal sealed class MainForm : Form
             FullRowSelect = true,
             GridLines = true
         };
-        _lvFloorCalls.Columns.Add("楼层", 120);
-        _lvFloorCalls.Columns.Add("方向", 120);
+        _ = _lvFloorCalls.Columns.Add("楼层", 120);
+        _ = _lvFloorCalls.Columns.Add("方向", 120);
         grpFloorCalls.Controls.Add(_lvFloorCalls);
         tlp.Controls.Add(grpFloorCalls, 0, 1);
         #endregion
@@ -134,8 +134,8 @@ internal sealed class MainForm : Form
             FullRowSelect = true,
             GridLines = true
         };
-        _lvClients.Columns.Add("客户端 ID / 地址", 200);
-        _lvClients.Columns.Add("状态", 150);
+        _ = _lvClients.Columns.Add("客户端 ID / 地址", 200);
+        _ = _lvClients.Columns.Add("状态", 150);
 
         // 右键菜单管理客户端
         var ctxClients = new ContextMenuStrip();
@@ -151,7 +151,7 @@ internal sealed class MainForm : Form
             }
         };
 
-        ctxClients.Items.Add(menuDisconnect);
+        _ = ctxClients.Items.Add(menuDisconnect);
         _lvClients.ContextMenuStrip = ctxClients;
         grpClients.Controls.Add(_lvClients);
         tlp.Controls.Add(grpClients, 1, 1);
@@ -257,7 +257,7 @@ internal sealed class MainForm : Form
             _lvElevators.Items.Clear();
             for (var i = 0; i < elevators.Length; i++)
             {
-                _lvElevators.Items.Add(new ListViewItem(new string[5]));
+                _ = _lvElevators.Items.Add(new ListViewItem(new string[5]));
             }
         }
 
@@ -292,7 +292,7 @@ internal sealed class MainForm : Form
         var existingKeys = new HashSet<string>();
         foreach (ListViewItem item in _lvFloorCalls.Items)
         {
-            existingKeys.Add($"{item.SubItems[0].Text}-{item.SubItems[1].Text}");
+            _ = existingKeys.Add($"{item.SubItems[0].Text}-{item.SubItems[1].Text}");
         }
 
         // 当前有效的呼叫项集合, 格式为 "楼层-方向"
@@ -310,13 +310,13 @@ internal sealed class MainForm : Form
                 foreach (var dir in dirs)
                 {
                     var key = $"{floor}-{dir}";
-                    currentKeys.Add(key);
+                    _ = currentKeys.Add(key);
 
                     if (!existingKeys.Contains(key))
                     {
                         var item = new ListViewItem(floor.ToString());
-                        item.SubItems.Add(dir.ToString());
-                        _lvFloorCalls.Items.Add(item);
+                        _ = item.SubItems.Add(dir.ToString());
+                        _ = _lvFloorCalls.Items.Add(item);
                     }
                 }
             }
@@ -371,8 +371,8 @@ internal sealed class MainForm : Form
             if (!existingIds.Contains(id))
             {
                 var item = new ListViewItem(id ?? "Unknown");
-                item.SubItems.Add("已连接");
-                _lvClients.Items.Add(item);
+                _ = item.SubItems.Add("已连接");
+                _ = _lvClients.Items.Add(item);
             }
         }
 
