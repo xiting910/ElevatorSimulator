@@ -13,7 +13,7 @@ file static class Program
     /// <summary>
     /// 程序唯一标识符
     /// </summary>
-    private const string AppId = $"Local\\ElevatorServer_{Share.Constants.Author}";
+    private const string AppId = $"Local\\{Share.Constants.Author}_{Share.Constants.AppName}";
 
     /// <summary>
     /// 全局互斥体, 保证单实例

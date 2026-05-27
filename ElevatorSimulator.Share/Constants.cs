@@ -11,9 +11,14 @@ public static class Constants
     public const string Author = "xiting910";
 
     /// <summary>
+    /// 程序名称
+    /// </summary>
+    public const string AppName = "ElevatorSimulator";
+
+    /// <summary>
     /// 命名管道的名称
     /// </summary>
-    public const string PipeName = "ElevatorSimulatorPipe";
+    public const string PipeName = $"{AppName}Pipe";
 
     /// <summary>
     /// 电梯的数量
@@ -39,4 +44,9 @@ public static class Constants
     /// 电梯门开关时间, 单位为秒
     /// </summary>
     public const int DoorOpenCloseTimeSec = 3;
+
+    /// <summary>
+    /// 门完全打开后等待的时间, 单位为秒
+    /// </summary>
+    public const int DoorOpenWaitTimeSec = 10;
 }

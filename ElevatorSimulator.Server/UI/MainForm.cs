@@ -33,11 +33,6 @@ internal sealed class MainForm : Form
     private ListView _lvClients;
 
     /// <summary>
-    /// 调度算法选择框
-    /// </summary>
-    private ComboBox _cmbAlgorithm;
-
-    /// <summary>
     /// 日志显示区域
     /// </summary>
     private RichTextBox _rtbLogs;
@@ -55,13 +50,13 @@ internal sealed class MainForm : Form
     /// <summary>
     /// 初始化 UI 组件
     /// </summary>
-    [MemberNotNull(nameof(_lvElevators), nameof(_lvFloorCalls), nameof(_lvClients), nameof(_cmbAlgorithm), nameof(_rtbLogs), nameof(_cmbLogFilter))]
+    [MemberNotNull(nameof(_lvElevators), nameof(_lvFloorCalls), nameof(_lvClients), nameof(_rtbLogs), nameof(_cmbLogFilter))]
     private void InitializeComponent()
     {
         // 基本窗体设置
         Text = "电梯模拟器服务端控制台";
-        Size = new(1200, 1000);
-        MinimumSize = new(1200, 1000);
+        Size = new(1200, 1050);
+        MinimumSize = new(1200, 1050);
         StartPosition = FormStartPosition.CenterScreen;
 
         // 使用 TableLayoutPanel 进行布局
@@ -74,10 +69,9 @@ internal sealed class MainForm : Form
         };
         _ = tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
         _ = tlp.ColumnStyles.Add(new(SizeType.Percent, 50F));
-        _ = tlp.RowStyles.Add(new(SizeType.Percent, 25F));
-        _ = tlp.RowStyles.Add(new(SizeType.Percent, 25F));
-        _ = tlp.RowStyles.Add(new(SizeType.Absolute, 100F));
-        _ = tlp.RowStyles.Add(new(SizeType.Percent, 40F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 20F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 30F));
+        _ = tlp.RowStyles.Add(new(SizeType.Percent, 50F));
 
         #region 1. 电梯状态区域
         var grpElevators = new GroupBox { Text = "电梯状态 (双击查看详情)", Dock = DockStyle.Fill };
@@ -157,29 +151,7 @@ internal sealed class MainForm : Form
         tlp.Controls.Add(grpClients, 1, 1);
         #endregion
 
-        #region 4. 调度算法切换区域
-        var grpAlgorithm = new GroupBox { Text = "调度算法配置", Dock = DockStyle.Fill };
-        tlp.SetColumnSpan(grpAlgorithm, 2);
-        var flpAlgorithm = new FlowLayoutPanel { Dock = DockStyle.Fill, Padding = new(5) };
-        var lblAlgo = new Label { Text = "当前算法:", AutoSize = true, Margin = new(5, 8, 5, 5) };
-        _cmbAlgorithm = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 300, Margin = new(5, 5, 5, 5) };
-        _cmbAlgorithm.Items.AddRange(Utils.EnumItem<Enums.AlgorithmType>.GetAll());
-        _cmbAlgorithm.SelectedIndex = 0;
-        _cmbAlgorithm.SelectedIndexChanged += (s, e) =>
-        {
-            if (_cmbAlgorithm.SelectedItem is Utils.EnumItem<Enums.AlgorithmType> item)
-            {
-                Core.ElevatorManager.Instance.CurrentAlgorithm = item.Value;
-                Utils.Logger.Info($"[系统配置] 调度算法已切换为: {item.Description}");
-            }
-        };
-        flpAlgorithm.Controls.Add(lblAlgo);
-        flpAlgorithm.Controls.Add(_cmbAlgorithm);
-        grpAlgorithm.Controls.Add(flpAlgorithm);
-        tlp.Controls.Add(grpAlgorithm, 0, 2);
-        #endregion
-
-        #region 5. 实时日志区域
+        #region 4. 实时日志区域
         var grpLogs = new GroupBox { Text = "系统运行日志", Dock = DockStyle.Fill };
         tlp.SetColumnSpan(grpLogs, 2);
         var flpLogTop = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 60, Padding = new(0, 5, 0, 5) };
@@ -210,7 +182,7 @@ internal sealed class MainForm : Form
         btnClearLog.Click += (s, e) => _rtbLogs.Clear();
         grpLogs.Controls.Add(_rtbLogs);
         grpLogs.Controls.Add(flpLogTop);
-        tlp.Controls.Add(grpLogs, 0, 3);
+        tlp.Controls.Add(grpLogs, 0, 2);
         #endregion
 
         Controls.Add(tlp);

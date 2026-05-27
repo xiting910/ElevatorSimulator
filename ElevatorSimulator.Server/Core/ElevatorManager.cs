@@ -19,11 +19,6 @@ internal sealed class ElevatorManager
     private static readonly Lazy<ElevatorManager> _lazyInstance = new(() => new());
 
     /// <summary>
-    /// 当前使用的调度算法
-    /// </summary>
-    public Enums.AlgorithmType CurrentAlgorithm { get; set; }
-
-    /// <summary>
     /// 系统中所有的电梯实体
     /// </summary>
     public Models.ElevatorState[] Elevators { get; } = new Models.ElevatorState[Share.Constants.ElevatorCount];
