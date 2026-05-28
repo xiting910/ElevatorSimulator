@@ -206,6 +206,7 @@ internal sealed class MainForm : Form
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         Core.PipeServerManager.Instance.Dispose();
+        Core.ElevatorManager.Instance.Dispose();
         base.OnFormClosed(e);
     }
 

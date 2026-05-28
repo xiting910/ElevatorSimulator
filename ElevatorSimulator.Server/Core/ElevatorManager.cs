@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Timers;
 
 namespace ElevatorSimulator.Server.Core;
 
 /// <summary>
 /// 电梯中央调度与状态管理器, 采用单例模式
 /// </summary>
-internal sealed class ElevatorManager
+internal sealed class ElevatorManager : IDisposable
 {
     /// <summary>
     /// 获取单例实例
@@ -19,9 +20,14 @@ internal sealed class ElevatorManager
     private static readonly Lazy<ElevatorManager> _lazyInstance = new(() => new());
 
     /// <summary>
+    /// 用于控制所有控制器的定时器
+    /// </summary>
+    private readonly Timer _timer = new(Share.Constants.UpdateInterval) { AutoReset = true, Enabled = true };
+
+    /// <summary>
     /// 系统中所有的电梯实体
     /// </summary>
-    public Models.ElevatorState[] Elevators { get; } = new Models.ElevatorState[Share.Constants.ElevatorCount];
+    public Models.ElevatorState[] Elevators { get; }
 
     /// <summary>
     /// 激活的全局楼层外部呼叫集合
@@ -29,22 +35,30 @@ internal sealed class ElevatorManager
     public Models.FloorCallState FloorCallState { get; } = new();
 
     /// <summary>
+    /// 系统中所有的电梯实体的控制器
+    /// </summary>
+    public ElevatorController[] ElevatorControllers { get; }
+
+    /// <summary>
     /// 私有构造函数, 初始化电梯状态并准备调度系统
     /// </summary>
     private ElevatorManager()
     {
         // 初始化全部电梯状态
-        for (var i = 0; i < Share.Constants.ElevatorCount; i++)
+        Elevators = [new() { Id = 0 }, new() { Id = 1 }, new() { Id = 2 }];
+        foreach (var elevator in Elevators)
         {
-            Elevators[i] = new() { Id = i };
-            Elevators[i].PropertyChanged += OnElevatorStatePropertyChanged;
+            elevator.PropertyChanged += OnElevatorStatePropertyChanged;
         }
-
-        // 更新 UI 显示初始状态
-        UI.MainForm.Instance.UpdateElevatorStatus(Elevators);
 
         // 订阅楼层呼叫状态变化事件
         FloorCallState.PropertyChanged += OnFloorCallStatePropertyChanged;
+
+        // 初始化全部电梯控制器
+        ElevatorControllers = [new(0, _timer), new(1, _timer), new(2, _timer)];
+
+        // 更新 UI 显示初始状态
+        UI.MainForm.Instance.UpdateElevatorStatus(Elevators);
     }
 
     /// <summary>
@@ -69,6 +83,7 @@ internal sealed class ElevatorManager
     {
         if (Elevators[elevatorId].AddInternalCall(targetFloor))
         {
+            ElevatorControllers[elevatorId].AddInternalTask(targetFloor);
             Utils.Logger.Info($"收到电梯呼叫: 电梯 {elevatorId}, 目标楼层 {targetFloor}");
         }
     }
@@ -82,6 +97,10 @@ internal sealed class ElevatorManager
     {
         if (FloorCallState.RemoveFloorCall(floor, direction))
         {
+            foreach (var controller in ElevatorControllers)
+            {
+                controller.RemoveExternalTask(floor, direction);
+            }
             Utils.Logger.Info($"取消楼层呼叫: {floor} 楼, 方向 {direction}");
         }
     }
@@ -95,33 +114,8 @@ internal sealed class ElevatorManager
     {
         if (Elevators[elevatorId].RemoveInternalCall(targetFloor))
         {
+            ElevatorControllers[elevatorId].RemoveInternalTask(targetFloor);
             Utils.Logger.Info($"取消电梯呼叫: 电梯 {elevatorId}, 目标楼层 {targetFloor}");
-        }
-    }
-
-    /// <summary>
-    /// 完成楼层外部呼叫
-    /// </summary>
-    /// <param name="floor">呼叫所在的楼层</param>
-    /// <param name="direction">呼叫的方向</param>
-    public void CompleteFloorCall(int floor, Share.Direction direction)
-    {
-        if (FloorCallState.RemoveFloorCall(floor, direction))
-        {
-            Utils.Logger.Info($"完成楼层呼叫: {floor} 楼, 方向 {direction}");
-        }
-    }
-
-    /// <summary>
-    /// 完成电梯内部呼叫
-    /// </summary>
-    /// <param name="elevatorId">呼叫所在的电梯 ID</param>
-    /// <param name="targetFloor">呼叫的目标楼层</param>
-    public void CompleteElevatorCall(int elevatorId, int targetFloor)
-    {
-        if (Elevators[elevatorId].RemoveInternalCall(targetFloor))
-        {
-            Utils.Logger.Info($"完成电梯呼叫: 电梯 {elevatorId}, 目标楼层 {targetFloor}");
         }
     }
 
@@ -160,16 +154,30 @@ internal sealed class ElevatorManager
     /// <param name="e">属性变化事件参数</param>
     private void OnFloorCallStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Models.FloorCallState.ActiveCalls))
+        if (sender is Models.FloorCallState state)
         {
             // 更新 UI 显示最新的楼层呼叫状态
-            UI.MainForm.Instance.UpdateFloorCalls(FloorCallState.ActiveCalls);
+            UI.MainForm.Instance.UpdateFloorCalls(state.ActiveCalls);
 
             // 向客户端广播最新的楼层呼叫状态, 以便客户端更新显示
             _ = PipeServerManager.Instance.BroadcastFloorCallStatusAsync(new()
             {
-                ActiveCalls = FloorCallState.ActiveCalls
+                ActiveCalls = state.ActiveCalls
             });
         }
+    }
+
+    /// <summary>
+    /// 释放资源, 停止定时器并清理事件订阅
+    /// </summary>
+    public void Dispose()
+    {
+        _timer.Dispose();
+        foreach (var elevator in Elevators)
+        {
+            elevator.PropertyChanged -= OnElevatorStatePropertyChanged;
+        }
+        FloorCallState.PropertyChanged -= OnFloorCallStatePropertyChanged;
+        GC.SuppressFinalize(this);
     }
 }

@@ -43,10 +43,15 @@ public static class Constants
     /// <summary>
     /// 电梯门开关时间, 单位为秒
     /// </summary>
-    public const int DoorOpenCloseTimeSec = 3;
+    public const int DoorOpenCloseTimeSec = 2;
 
     /// <summary>
     /// 门完全打开后等待的时间, 单位为秒
     /// </summary>
-    public const int DoorOpenWaitTimeSec = 10;
+    public const int DoorOpenWaitTimeSec = 6;
+
+    /// <summary>
+    /// 电梯状态计时器更新的时间间隔, 单位为毫秒
+    /// </summary>
+    public const int UpdateInterval = 250;
 }
