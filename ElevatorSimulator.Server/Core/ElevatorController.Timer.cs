@@ -71,13 +71,46 @@ internal sealed partial class ElevatorController
                 elevatorState.CurrentFloor += elevatorState.MovingDirection == Share.Direction.Up ? 1 : -1;
                 _passedIntervalsSinceLastFloor = 0;
 
-                // 如果到达了目标楼层, 则停靠并打开电梯门
+                // 根据当前楼层和目标楼层的关系更新电梯状态
                 lock (_tasksLock)
                 {
-                    if (elevatorState.CurrentFloor == _currentTargetFloor)
+                    if (_currentTargetFloor is not null)
                     {
+                        if (elevatorState.CurrentFloor < _currentTargetFloor)
+                        {
+                            elevatorState.MovingDirection = Share.Direction.Up;
+                        }
+                        else if (elevatorState.CurrentFloor > _currentTargetFloor)
+                        {
+                            elevatorState.MovingDirection = Share.Direction.Down;
+                        }
+                        else
+                        {
+                            // 到达目标楼层, 停止电梯并打开电梯门
+                            elevatorState.MovingDirection = Share.Direction.None;
+                            elevatorState.Door = Share.DoorState.Opening;
+
+                            // 更新当前方向以便完成任务时移除正确的外部任务
+                            if (_currentDirection is Share.Direction.Up)
+                            {
+                                if (!_upExternalTasks.Contains(elevatorState.CurrentFloor) && _downExternalTasks.Contains(elevatorState.CurrentFloor))
+                                {
+                                    _currentDirection = Share.Direction.Down;
+                                }
+                            }
+                            else if (_currentDirection is Share.Direction.Down)
+                            {
+                                if (!_downExternalTasks.Contains(elevatorState.CurrentFloor) && _upExternalTasks.Contains(elevatorState.CurrentFloor))
+                                {
+                                    _currentDirection = Share.Direction.Up;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // 没有目标楼层, 停止电梯
                         elevatorState.MovingDirection = Share.Direction.None;
-                        elevatorState.Door = Share.DoorState.Opening;
                     }
                 }
             }
@@ -93,6 +126,9 @@ internal sealed partial class ElevatorController
                 {
                     _passedIntervalsSinceDoorOpened = 0;
                     elevatorState.Door = Share.DoorState.Closing;
+
+                    // 关门时更新目标楼层
+                    UpdateTarget();
                 }
             }
             // 如果电梯门正在打开, 则每次触发定时器事件时增加开门率直到完全打开
@@ -153,7 +189,7 @@ internal sealed partial class ElevatorController
     }
 
     /// <summary>
-    /// 完成当前楼层的任务, 并更新目标
+    /// 完成当前楼层的任务
     /// </summary>
     /// <param name="currentFloor">当前楼层</param>
     private void CompleteCurrentFloorTask(int currentFloor)
@@ -174,7 +210,8 @@ internal sealed partial class ElevatorController
             }
         }
 
-        // 更新目标楼层
-        UpdateTarget();
+        // 从电梯状态中移除当前楼层的内部呼叫和当前方向的外部呼叫
+        _ = ElevatorManager.Instance.Elevators[ElevatorId].RemoveInternalCall(currentFloor);
+        _ = ElevatorManager.Instance.FloorCallState.RemoveFloorCall(currentFloor, _currentDirection);
     }
 }

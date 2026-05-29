@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Timers;
 
 namespace ElevatorSimulator.Server.Core;
@@ -70,6 +71,8 @@ internal sealed class ElevatorManager : IDisposable
     {
         if (FloorCallState.AddFloorCall(floor, direction))
         {
+            // 根据每个控制器预测的响应时间, 向响应时间最短的控制器添加外部任务
+            ElevatorControllers.OrderBy(c => c.PredictTimeToServeExternalCall(floor, direction)).First().AddExternalTask(floor, direction);
             Utils.Logger.Info($"收到楼层呼叫: {floor} 楼, 方向 {direction}");
         }
     }

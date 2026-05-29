@@ -122,6 +122,83 @@ internal sealed partial class ElevatorController
     }
 
     /// <summary>
+    /// 预测插入一个外部呼叫时完成该呼叫所需的时间
+    /// </summary>
+    /// <param name="floor">呼叫所在的楼层</param>
+    /// <param name="direction">呼叫的方向</param>
+    /// <returns>完成该呼叫所需的时间(目前实现以需经过的楼层数做简单代替)</returns>
+    public int PredictTimeToServeExternalCall(int floor, Share.Direction direction)
+    {
+        // 当前任务的拷贝
+        SortedSet<int> internalTasksCopy, upExternalTasksCopy, downExternalTasksCopy;
+
+        // 当前方向的拷贝
+        Share.Direction currentDirectionCopy;
+
+        // 当前楼层
+        var currentFloor = ElevatorManager.Instance.Elevators[ElevatorId].CurrentFloor;
+
+        // 加锁保护当前状态的读取
+        lock (_tasksLock)
+        {
+            internalTasksCopy = [.. _internalTasks];
+            upExternalTasksCopy = [.. _upExternalTasks];
+            downExternalTasksCopy = [.. _downExternalTasks];
+            currentDirectionCopy = _currentDirection;
+        }
+
+        // 添加该外部呼叫到拷贝的任务列表中
+        if (direction is Share.Direction.Up)
+        {
+            _ = upExternalTasksCopy.Add(floor);
+        }
+        else if (direction is Share.Direction.Down)
+        {
+            _ = downExternalTasksCopy.Add(floor);
+        }
+
+        // 根据当前方向判断需要经过的楼层数
+        if (currentDirectionCopy is Share.Direction.None)
+        {
+            return Math.Abs(currentFloor - floor);
+        }
+        else if (currentDirectionCopy is Share.Direction.Up)
+        {
+            if (floor >= currentFloor)
+            {
+                // 如果呼叫在当前楼层之上, 则需要经过的楼层数为从当前楼层到该呼叫所在楼层的距离
+                return floor - currentFloor;
+            }
+            else
+            {
+                // 需要经过的楼层数为从当前楼层到最高任务楼层的距离加上从最高任务楼层到该呼叫所在楼层的距离
+                var maxTaskFloor = Math.Max(internalTasksCopy.Count == 0 ? int.MinValue : internalTasksCopy.Max, upExternalTasksCopy.Count == 0 ? int.MinValue : upExternalTasksCopy.Max);
+                maxTaskFloor = Math.Max(maxTaskFloor, downExternalTasksCopy.Count == 0 ? int.MinValue : downExternalTasksCopy.Max);
+                return maxTaskFloor - currentFloor + maxTaskFloor - floor;
+            }
+        }
+        else if (currentDirectionCopy is Share.Direction.Down)
+        {
+            if (floor <= currentFloor)
+            {
+                // 如果呼叫在当前楼层之下, 则需要经过的楼层数为从当前楼层到该呼叫所在楼层的距离
+                return currentFloor - floor;
+            }
+            else
+            {
+                // 需要经过的楼层数为从当前楼层到最低任务楼层的距离加上从最低任务楼层到该呼叫所在楼层的距离
+                var minTaskFloor = Math.Min(internalTasksCopy.Count == 0 ? int.MaxValue : internalTasksCopy.Min, upExternalTasksCopy.Count == 0 ? int.MaxValue : upExternalTasksCopy.Min);
+                minTaskFloor = Math.Min(minTaskFloor, downExternalTasksCopy.Count == 0 ? int.MaxValue : downExternalTasksCopy.Min);
+                return currentFloor - minTaskFloor + floor - minTaskFloor;
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException("Invalid current direction in PredictTimeToServeExternalCall: " + currentDirectionCopy);
+        }
+    }
+
+    /// <summary>
     /// Look 算法更新电梯的目标楼层和移动方向
     /// </summary>
     private void UpdateTarget()
@@ -152,21 +229,56 @@ internal sealed partial class ElevatorController
             // 如果当前方向为空, 说明是新加入第一个任务, 则直接以该任务为目标楼层, 并设置方向
             if (_currentDirection is Share.Direction.None)
             {
-                // 内部任务列表不可能有任务
+                // 3 个任务列表应该有且只有一个不为空, 否则说明有 bug
+                if ((internalEmpty ? 0 : 1) + (upExternalEmpty ? 0 : 1) + (downExternalEmpty ? 0 : 1) != 1)
+                {
+                    throw new InvalidOperationException("Invalid state: exactly one task list should be non-empty when current direction is None");
+                }
+
+                // 如果是内部任务
                 if (!internalEmpty)
                 {
-                    throw new InvalidOperationException("Internal task cannot exist when current direction is None");
-                }
+                    // 最多有两个内部任务, 否则说明有 bug
+                    if (_internalTasks.Count > 2)
+                    {
+                        throw new InvalidOperationException("Invalid state: at most two internal tasks should be present when current direction is None");
+                    }
 
-                // 所有外部任务应该有且只有一个
-                if (_upExternalTasks.Count + _downExternalTasks.Count != 1)
-                {
-                    throw new InvalidOperationException("There should be exactly one external task when current direction is None");
-                }
+                    // 如果有两个内部任务
+                    if (_internalTasks.Count == 2)
+                    {
+                        // 其中一个必定与当前楼层相同, 否则说明有 bug
+                        if (!_internalTasks.Contains(currentFloor))
+                        {
+                            throw new InvalidOperationException("Invalid state: one internal task should be at the current floor when there are two internal tasks and current direction is None");
+                        }
 
+                        // 设置当前楼层为目标楼层
+                        _currentTargetFloor = currentFloor;
+                    }
+                    else
+                    {
+                        // 只有一个内部任务, 以该任务为目标楼层
+                        _currentTargetFloor = _internalTasks.Min;
+                        if (_currentTargetFloor > currentFloor)
+                        {
+                            _currentDirection = Share.Direction.Up;
+                        }
+                        else if (_currentTargetFloor < currentFloor)
+                        {
+                            _currentDirection = Share.Direction.Down;
+                        }
+                    }
+                }
                 // 如果是向上的外部任务
-                if (!upExternalEmpty)
+                else if (!upExternalEmpty)
                 {
+                    // 应该有且只有一个外部任务, 否则说明有 bug
+                    if (_upExternalTasks.Count != 1)
+                    {
+                        throw new InvalidOperationException("Invalid state: exactly one up external task should be present when current direction is None");
+                    }
+
                     _currentTargetFloor = _upExternalTasks.Min;
                     if (_currentTargetFloor >= currentFloor)
                     {
@@ -180,7 +292,13 @@ internal sealed partial class ElevatorController
                 // 如果是向下的外部任务
                 else if (!downExternalEmpty)
                 {
-                    _currentTargetFloor = _downExternalTasks.Max;
+                    // 应该有且只有一个外部任务, 否则说明有 bug
+                    if (_downExternalTasks.Count != 1)
+                    {
+                        throw new InvalidOperationException("Invalid state: exactly one down external task should be present when current direction is None");
+                    }
+
+                    _currentTargetFloor = _downExternalTasks.Min;
                     if (_currentTargetFloor > currentFloor)
                     {
                         _currentDirection = Share.Direction.Up;
