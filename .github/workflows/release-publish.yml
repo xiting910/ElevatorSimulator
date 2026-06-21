@@ -5,18 +5,83 @@ name: Release Publish
 
 # 触发条件: 当推送以 v 开头的 tag 时执行
 on:
-  push:
-    tags:
-      - "v*"
+    push:
+        tags:
+            - "v*"
 
 # 权限: 需要写入 contents 才能创建 Release 并上传产物
 permissions:
-  contents: write
+    contents: write
+
+# 环境变量: 使用 GITHUB_TOKEN 进行认证
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # 作业定义: 包含构建、测试、发布步骤
 jobs:
-  release:
-    # TODO: 根据项目需求选择合适的运行环境
-    runs-on: ubuntu-latest
+    release:
+        runs-on: windows-latest
 
-    # TODO: 根据项目需求调整步骤
+        steps:
+            # 1. 检出代码
+            - name: Checkout repository
+              uses: actions/checkout@v7
+
+            # 2. 安装 .NET 10 SDK
+            - name: Setup .NET SDK
+              uses: actions/setup-dotnet@v5
+              with:
+                  dotnet-version: 10.0.x
+
+            # 3. 运行全部单元测试
+            - name: Run tests
+              run: dotnet test --configuration Release --verbosity normal
+
+            # 4. 发布服务端
+            - name: Publish Server
+              run: dotnet publish ElevatorSimulator.Server\ElevatorSimulator.Server.csproj -c Release -r win-x64 -o publish\Server
+
+            # 5. 发布客户端
+            - name: Publish Client
+              run: dotnet publish ElevatorSimulator.Client\ElevatorSimulator.Client.csproj -c Release -r win-x64 -o publish\Client
+
+            # 6. 生成 Commit 变更日志
+            - name: Generate Changelog
+              shell: pwsh
+              run: |
+                  $currentTag = '${{ github.ref_name }}'
+                  Write-Host "Current tag: $currentTag"
+
+                  # 获取上一个 tag
+                  $allTags = git tag --sort=-creatordate
+                  $previousTag = ($allTags -split '\n' | Where-Object { $_ -ne $currentTag } | Select-Object -First 1)
+
+                  if ($previousTag) {
+                      Write-Host "Previous tag: $previousTag"
+                      $range = "$previousTag..$currentTag"
+                  } else {
+                      Write-Host "No previous tag found (this is the first release)"
+                      $range = $currentTag
+                  }
+
+                  $commitList = git log --pretty=format:"- %s (@%an)" $range
+
+                  if (-not $commitList) {
+                      $commitList = "（无新提交）"
+                  }
+
+                  $body = "## 📝 Commits in this release`n`n$commitList"
+
+                  # 写入文件, 供下一步读取
+                  $body | Out-File -FilePath changelog.md -Encoding UTF8
+                  Write-Host "Changelog written to changelog.md"
+
+            # 7. 创建 GitHub Release 并上传两个 exe 文件
+            - name: Create Release
+              uses: softprops/action-gh-release@v3
+              with:
+                  name: "${{ github.ref_name }}"
+                  body_path: changelog.md
+                  files: |
+                      publish\Server\ElevatorSimulator.Server.exe
+                      publish\Client\ElevatorSimulator.Client.exe

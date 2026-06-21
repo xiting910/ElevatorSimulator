@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Other/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+  </Folder>
+  <Project Path="ElevatorSimulator.Client.Test/ElevatorSimulator.Client.Test.csproj" Id="aed45570-2d69-4601-8406-0fd89a9441c9" />
+  <Project Path="ElevatorSimulator.Client/ElevatorSimulator.Client.csproj" Id="6d0daf12-a74e-447b-b8bc-ee31608432c4" />
+  <Project Path="ElevatorSimulator.Server.Test/ElevatorSimulator.Server.Test.csproj" Id="a4191953-9ed1-424d-b33e-d80ddf047e20" />
+  <Project Path="ElevatorSimulator.Server/ElevatorSimulator.Server.csproj" Id="dcf9ffdf-6bb3-4ab0-83cb-41c9c29e12fa" />
+  <Project Path="ElevatorSimulator.Share.Test/ElevatorSimulator.Share.Test.csproj" Id="8bd03832-b63e-4629-8bc8-1723ee737cd8" />
+  <Project Path="ElevatorSimulator.Share/ElevatorSimulator.Share.csproj" Id="4b0b0f5c-8b0a-4c61-9933-75146bc9ba03" />
+</Solution>
