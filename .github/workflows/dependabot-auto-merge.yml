@@ -27,5 +27,10 @@ jobs:
             - name: Approve PR
               run: gh pr review --approve "$PR_URL"
 
+            - name: Update branch from base (prevent out-of-date failure)
+              run: |
+                  gh pr update-branch "$PR_URL" --rebase 2>/dev/null || \
+                  echo "⚠️  Branch update not needed or has conflicts — will retry on next sync"
+
             - name: Enable auto-merge
               run: gh pr merge --auto --squash "$PR_URL"

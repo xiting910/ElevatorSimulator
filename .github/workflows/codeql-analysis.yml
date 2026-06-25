@@ -44,6 +44,10 @@ jobs:
               uses: actions/setup-dotnet@v5
               with:
                   dotnet-version: 10.0.x
+                  cache: true
+                  cache-dependency-path: |
+                      **/*.csproj
+                      **/*.slnx
 
             # CodeQL 自动检测构建系统并编译
             - name: Autobuild
