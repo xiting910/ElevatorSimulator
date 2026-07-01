@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Share.Logging;
+using ElevatorSimulator.Share.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace ElevatorSimulator.Share.Test;
@@ -16,7 +16,10 @@ public sealed class FileLoggerProviderTests : IDisposable
     /// <summary>
     /// 初始化临时日志目录路径
     /// </summary>
-    public FileLoggerProviderTests() => _tempDir = Path.Combine(Path.GetTempPath(), $"ElevatorTest_{Guid.NewGuid():N}");
+    public FileLoggerProviderTests()
+    {
+        _tempDir = Path.Combine(Path.GetTempPath(), $"ElevatorTest_{Guid.NewGuid():N}");
+    }
 
     /// <summary>
     /// 构造函数应在指定路径创建日志目录

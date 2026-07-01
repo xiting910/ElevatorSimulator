@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -107,7 +107,10 @@ public sealed class FileLoggerProvider : ILoggerProvider, IDisposable
     }
 
     /// <inheritdoc/>
-    public ILogger CreateLogger(string categoryName) => _loggers.GetOrAdd(categoryName, new CustomLogger(categoryName, true, level => level >= MinimumLevel, WriteLog));
+    public ILogger CreateLogger(string categoryName)
+    {
+        return _loggers.GetOrAdd(categoryName, new CustomLogger(categoryName, true, level => level >= MinimumLevel, WriteLog));
+    }
 
     /// <summary>
     /// 将日志消息写入当前文件

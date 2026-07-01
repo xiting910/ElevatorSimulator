@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Text;
 
@@ -14,10 +14,16 @@ namespace ElevatorSimulator.Share.Logging;
 public sealed class CustomLogger(string categoryName, bool includeCategory, Func<LogLevel, bool> isEnabled, Action<string> write) : ILogger
 {
     /// <inheritdoc/>
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    {
+        return null;
+    }
 
     /// <inheritdoc/>
-    public bool IsEnabled(LogLevel logLevel) => isEnabled(logLevel);
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return isEnabled(logLevel);
+    }
 
     /// <inheritdoc/>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)

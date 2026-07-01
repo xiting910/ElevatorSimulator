@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Server.Core.Controllers;
+using ElevatorSimulator.Server.Core.Controllers;
 using ElevatorSimulator.Server.Models;
 using ElevatorSimulator.Server.Models.Interfaces;
 using ElevatorSimulator.Share;
@@ -36,7 +36,10 @@ public sealed class ElevatorControllerLookTests
     /// 使用指定电梯状态和共享 Mock 依赖创建 <see cref="ElevatorController"/> 实例
     /// </summary>
     /// <param name="state">电梯逻辑状态</param>
-    private ElevatorController CreateController(IElevatorState state) => new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    private ElevatorController CreateController(IElevatorState state)
+    {
+        return new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    }
 
     /// <summary>
     /// 同楼层门关闭时, 预测时间应至少包含门开启耗时

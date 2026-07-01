@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -12,7 +12,10 @@ public sealed partial class MainForm
     /// </summary>
     /// <param name="sender">事件发送者</param>
     /// <param name="e">事件参数</param>
-    private void OnAnimationTimerTick(object? sender, EventArgs e) => _panelRegistry[_currentPanel].OnAnimate?.Invoke();
+    private void OnAnimationTimerTick(object? sender, EventArgs e)
+    {
+        _panelRegistry[_currentPanel].OnAnimate?.Invoke();
+    }
 
     /// <summary>
     /// 用于处理 WM_MOVING 消息的结构体

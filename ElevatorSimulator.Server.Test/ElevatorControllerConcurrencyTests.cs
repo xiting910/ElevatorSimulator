@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Server.Core.Controllers;
+using ElevatorSimulator.Server.Core.Controllers;
 using ElevatorSimulator.Server.Models;
 using ElevatorSimulator.Server.Models.Interfaces;
 using ElevatorSimulator.Share.Enums;
@@ -33,8 +33,10 @@ public sealed class ElevatorControllerConcurrencyTests
     /// <summary>
     /// 使用指定电梯状态和共享 Mock 依赖创建 <see cref="ElevatorController"/> 实例
     /// </summary>
-    private ElevatorController CreateController(IElevatorState state) =>
-        new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    private ElevatorController CreateController(IElevatorState state)
+    {
+        return new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    }
 
     /// <summary>
     /// 多线程同时添加内部任务不应抛出异常或死锁

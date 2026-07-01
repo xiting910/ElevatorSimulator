@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -185,7 +185,10 @@ public sealed partial class MainViewModel : Interfaces.IMainViewModel
     }
 
     /// <inheritdoc/>
-    public void GoToWelcome() => PanelSwitchRequested?.Invoke(Enums.PanelType.Welcome);
+    public void GoToWelcome()
+    {
+        PanelSwitchRequested?.Invoke(Enums.PanelType.Welcome);
+    }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -222,7 +225,10 @@ public sealed partial class MainViewModel : Interfaces.IMainViewModel
     /// 楼层状态更新时的回调
     /// </summary>
     /// <param name="msg">新的楼层状态消息</param>
-    private void OnFloorStatusReceived(Messages.FloorStatusMessage msg) => FloorPanelStateChanged?.Invoke();
+    private void OnFloorStatusReceived(Messages.FloorStatusMessage msg)
+    {
+        FloorPanelStateChanged?.Invoke();
+    }
 
     /// <summary>
     /// 连接断开时的回调

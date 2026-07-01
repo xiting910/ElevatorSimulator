@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +22,10 @@ public sealed partial class ElevatorManager : Interfaces.IElevatorManager
     public event Action<Dictionary<int, Direction[]>>? FloorCallsChanged;
 
     /// <inheritdoc/>
-    public IEnumerable<Models.Interfaces.IElevatorState> GetCurrentStates() => _controllers.Select(c => c.State);
+    public IEnumerable<Models.Interfaces.IElevatorState> GetCurrentStates()
+    {
+        return _controllers.Select(c => c.State);
+    }
 
     /// <summary>
     /// 用于控制所有控制器的定时器
@@ -133,10 +136,16 @@ public sealed partial class ElevatorManager : Interfaces.IElevatorManager
     }
 
     /// <inheritdoc/>
-    public void RequestDoorOpen(int elevatorId) => _controllers[elevatorId].SignalDoorOpen();
+    public void RequestDoorOpen(int elevatorId)
+    {
+        _controllers[elevatorId].SignalDoorOpen();
+    }
 
     /// <inheritdoc/>
-    public void RequestDoorClose(int elevatorId) => _controllers[elevatorId].SignalDoorClose();
+    public void RequestDoorClose(int elevatorId)
+    {
+        _controllers[elevatorId].SignalDoorClose();
+    }
 
     /// <summary>
     /// 电梯状态发生变化时调用

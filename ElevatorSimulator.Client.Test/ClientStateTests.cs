@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Client.Core;
+using ElevatorSimulator.Client.Core;
 using ElevatorSimulator.Share;
 using ElevatorSimulator.Share.Enums;
 using ElevatorSimulator.Share.Messages;
@@ -19,13 +19,19 @@ public sealed class ClientStateTests
     /// <see cref="ClientState.ClientId"/> 应非空
     /// </summary>
     [Fact]
-    public void ClientId_IsNotEmpty() => Assert.False(string.IsNullOrEmpty(_state.ClientId));
+    public void ClientId_IsNotEmpty()
+    {
+        Assert.False(string.IsNullOrEmpty(_state.ClientId));
+    }
 
     /// <summary>
     /// <see cref="ClientState.ClientId"/> 应为 32 字符的 GUID (去连字符)
     /// </summary>
     [Fact]
-    public void ClientId_Is32Characters() => Assert.Equal(32, _state.ClientId.Length);
+    public void ClientId_Is32Characters()
+    {
+        Assert.Equal(32, _state.ClientId.Length);
+    }
 
     /// <summary>
     /// 不同 <see cref="ClientState"/> 实例应有不同的 ClientId
@@ -42,7 +48,10 @@ public sealed class ClientStateTests
     /// <see cref="ClientState.CurrentFloor"/> 默认值应为 0
     /// </summary>
     [Fact]
-    public void CurrentFloor_DefaultIsZero() => Assert.Equal(0, _state.CurrentFloor);
+    public void CurrentFloor_DefaultIsZero()
+    {
+        Assert.Equal(0, _state.CurrentFloor);
+    }
 
     /// <summary>
     /// <see cref="ClientState.CurrentFloor"/> 应可正常读写
@@ -61,7 +70,10 @@ public sealed class ClientStateTests
     /// <see cref="ClientState.CurrentElevatorId"/> 默认值应为 <see langword="null"/>
     /// </summary>
     [Fact]
-    public void CurrentElevatorId_DefaultIsNull() => Assert.Null(_state.CurrentElevatorId);
+    public void CurrentElevatorId_DefaultIsNull()
+    {
+        Assert.Null(_state.CurrentElevatorId);
+    }
 
     /// <summary>
     /// <see cref="ClientState.CurrentElevatorId"/> 应可正常读写
@@ -80,7 +92,10 @@ public sealed class ClientStateTests
     /// <see cref="ClientState.ElevatorStatuses"/> 数组长度应等于 <see cref="Constants.ElevatorCount"/>
     /// </summary>
     [Fact]
-    public void ElevatorStatuses_HasCorrectLength() => Assert.Equal(Constants.ElevatorCount, _state.ElevatorStatuses.Length);
+    public void ElevatorStatuses_HasCorrectLength()
+    {
+        Assert.Equal(Constants.ElevatorCount, _state.ElevatorStatuses.Length);
+    }
 
     /// <summary>
     /// 电梯 ID 越界时, <see cref="ClientState.CanEnterElevator"/> 应返回 <see langword="false"/>

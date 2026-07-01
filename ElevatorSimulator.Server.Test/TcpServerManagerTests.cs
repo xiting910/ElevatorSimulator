@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Server.Core;
+using ElevatorSimulator.Server.Core;
 using ElevatorSimulator.Server.Core.Interfaces;
 using ElevatorSimulator.Server.Core.Networking;
 using ElevatorSimulator.Share.Interfaces;
@@ -24,11 +24,14 @@ public sealed class TcpServerManagerTests : IDisposable
     /// <summary>
     /// 使用 Mock 依赖创建 <see cref="TcpServerManager"/> 实例
     /// </summary>
-    private static TcpServerManager CreateManager() => new(
+    private static TcpServerManager CreateManager()
+    {
+        return new(
         Mock.Of<IElevatorManager>(),
         Mock.Of<ILogger<TcpServerManager>>(),
         Mock.Of<IStreamMessenger>(),
         new MessageRouter(Mock.Of<ILogger<MessageRouter>>(), []));
+    }
 
     /// <summary>
     /// 创建一个已连接的 TcpClient 并封装为 ClientContext, 注入到管理器的客户端字典中

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -68,10 +68,16 @@ public sealed class MainViewModel : Interfaces.IMainViewModel
     }
 
     /// <inheritdoc/>
-    public void DisconnectClient(string clientId) => _networkService.DisconnectClient(clientId);
+    public void DisconnectClient(string clientId)
+    {
+        _networkService.DisconnectClient(clientId);
+    }
 
     /// <inheritdoc/>
-    public void SetLogLevel(LogLevel level) => _uiLoggerProvider.MinimumLevel = level;
+    public void SetLogLevel(LogLevel level)
+    {
+        _uiLoggerProvider.MinimumLevel = level;
+    }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -94,23 +100,35 @@ public sealed class MainViewModel : Interfaces.IMainViewModel
     /// 电梯状态变化时的回调
     /// </summary>
     /// <param name="elevators">电梯状态数组</param>
-    private void OnElevatorStatusChanged(IEnumerable<Models.Interfaces.IElevatorState> elevators) => ElevatorStatusChanged?.Invoke(elevators);
+    private void OnElevatorStatusChanged(IEnumerable<Models.Interfaces.IElevatorState> elevators)
+    {
+        ElevatorStatusChanged?.Invoke(elevators);
+    }
 
     /// <summary>
     /// 楼层呼叫状态变化时的回调
     /// </summary>
     /// <param name="activeCalls">当前激活的楼层呼叫</param>
-    private void OnFloorCallsChanged(Dictionary<int, Direction[]> activeCalls) => FloorCallsChanged?.Invoke(activeCalls);
+    private void OnFloorCallsChanged(Dictionary<int, Direction[]> activeCalls)
+    {
+        FloorCallsChanged?.Invoke(activeCalls);
+    }
 
     /// <summary>
     /// 客户端列表变化时的回调
     /// </summary>
     /// <param name="clientIds">当前连接的客户端 ID 集合</param>
-    private void OnClientListChanged(IEnumerable<string> clientIds) => ClientListChanged?.Invoke(clientIds);
+    private void OnClientListChanged(IEnumerable<string> clientIds)
+    {
+        ClientListChanged?.Invoke(clientIds);
+    }
 
     /// <summary>
     /// 日志消息回调
     /// </summary>
     /// <param name="message">格式化后的日志消息</param>
-    private void OnLog(string message) => LogReceived?.Invoke(message);
+    private void OnLog(string message)
+    {
+        LogReceived?.Invoke(message);
+    }
 }

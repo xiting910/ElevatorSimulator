@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -46,5 +46,8 @@ public sealed class EnumItem<T> where T : struct, Enum
     /// 重写 <see cref="object.ToString"/> 方法, 返回描述文本, 以便在 UI 中显示
     /// </summary>
     /// <returns>描述文本</returns>
-    public override string ToString() => Description;
+    public override string ToString()
+    {
+        return Description;
+    }
 }

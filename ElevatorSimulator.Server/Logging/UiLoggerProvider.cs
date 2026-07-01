@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 
@@ -25,13 +25,19 @@ public sealed class UiLoggerProvider : ILoggerProvider, IDisposable
     public LogLevel MinimumLevel { get; set; } = LogLevel.Information;
 
     /// <inheritdoc/>
-    public ILogger CreateLogger(string categoryName) => _loggers.GetOrAdd(categoryName, new Share.Logging.CustomLogger(categoryName, false, level => level >= MinimumLevel, RaiseLogReceived));
+    public ILogger CreateLogger(string categoryName)
+    {
+        return _loggers.GetOrAdd(categoryName, new Share.Logging.CustomLogger(categoryName, false, level => level >= MinimumLevel, RaiseLogReceived));
+    }
 
     /// <summary>
     /// 触发日志接收事件
     /// </summary>
     /// <param name="message">格式化后的日志消息</param>
-    private void RaiseLogReceived(string message) => LogReceived?.Invoke(message);
+    private void RaiseLogReceived(string message)
+    {
+        LogReceived?.Invoke(message);
+    }
 
     /// <inheritdoc/>
     public void Dispose()

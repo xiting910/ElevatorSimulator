@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ElevatorSimulator.Server.Core.Controllers;
@@ -210,7 +210,10 @@ public sealed partial class ElevatorController
     /// <param name="min">范围下界</param>
     /// <param name="max">范围上界</param>
     /// <returns><see langword="true"/> 如果范围内包含元素, 否则为 <see langword="false"/></returns>
-    private static bool HasAnyInRange(SortedSet<int> set, int min, int max) => min <= max && set.GetViewBetween(min, max).Count > 0;
+    private static bool HasAnyInRange(SortedSet<int> set, int min, int max)
+    {
+        return min <= max && set.GetViewBetween(min, max).Count > 0;
+    }
 
     /// <summary>
     /// 获取 <see cref="SortedSet{T}"/> 在 [min, max] 范围内的最小元素

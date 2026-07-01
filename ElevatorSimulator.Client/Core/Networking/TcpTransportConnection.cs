@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -20,7 +20,10 @@ public sealed class TcpTransportConnection : Interfaces.ITransportConnection
     public bool IsConnected => _tcpClient?.Connected ?? false;
 
     /// <inheritdoc/>
-    public Stream? GetStream() => _tcpClient?.GetStream();
+    public Stream? GetStream()
+    {
+        return _tcpClient?.GetStream();
+    }
 
     /// <inheritdoc/>
     public async Task ConnectAsync(string serverAddress, int serverPort, CancellationToken token)

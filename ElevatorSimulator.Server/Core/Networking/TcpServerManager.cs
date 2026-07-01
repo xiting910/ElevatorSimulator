@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -67,7 +67,10 @@ public sealed partial class TcpServerManager(Interfaces.IElevatorManager elevato
         /// <summary>
         /// 更新心跳时间戳为当前 UTC 时间
         /// </summary>
-        public void UpdateHeartbeat() => LastHeartbeatUtc = DateTime.UtcNow;
+        public void UpdateHeartbeat()
+        {
+            LastHeartbeatUtc = DateTime.UtcNow;
+        }
 
         /// <summary>
         /// 构造函数

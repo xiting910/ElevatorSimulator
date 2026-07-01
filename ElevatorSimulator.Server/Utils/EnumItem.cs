@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 
 namespace ElevatorSimulator.Server.Utils;
@@ -18,8 +18,9 @@ public static class EnumItem
     /// </summary>
     /// <typeparam name="T">枚举类型</typeparam>
     /// <returns>枚举项数组</returns>
-    public static EnumItem<T>[] GetAll<T>() where T : struct, Enum =>
-        (EnumItem<T>[])_cache.GetOrAdd(typeof(T), _ =>
+    public static EnumItem<T>[] GetAll<T>() where T : struct, Enum
+    {
+        return (EnumItem<T>[])_cache.GetOrAdd(typeof(T), _ =>
         {
             var values = Enum.GetValues<T>();
             var items = new EnumItem<T>[values.Length];
@@ -29,4 +30,5 @@ public static class EnumItem
             }
             return items;
         });
+    }
 }

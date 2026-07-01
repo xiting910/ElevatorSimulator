@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Server.Core;
+using ElevatorSimulator.Server.Core;
 using ElevatorSimulator.Server.Core.Interfaces;
 using ElevatorSimulator.Server.Models;
 using ElevatorSimulator.Server.Models.Interfaces;
@@ -65,11 +65,14 @@ public sealed class ElevatorManagerTests
     /// <summary>
     /// 使用 Mock 工厂和状态创建 <see cref="ElevatorManager"/> 实例
     /// </summary>
-    private ElevatorManager CreateManager() => new(
+    private ElevatorManager CreateManager()
+    {
+        return new(
         _loggerMock.Object,
         _floorCallStateMock.Object,
         _createStateMock.Object,
         _createControllerMock.Object);
+    }
 
     /// <summary>
     /// <see cref="ElevatorManager.FloorCallState"/> 应返回注入的 <see cref="IFloorCallState"/> 实例

@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Server.Core.Controllers;
+using ElevatorSimulator.Server.Core.Controllers;
 using ElevatorSimulator.Server.Models;
 using ElevatorSimulator.Server.Models.Interfaces;
 using ElevatorSimulator.Share;
@@ -36,8 +36,10 @@ public sealed class ElevatorControllerTests
     /// 使用指定电梯状态和共享 Mock 依赖创建 <see cref="ElevatorController"/> 实例
     /// </summary>
     /// <param name="state">电梯逻辑状态</param>
-    private ElevatorController CreateController(IElevatorState state) =>
-        new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    private ElevatorController CreateController(IElevatorState state)
+    {
+        return new(_timer, state, _floorCallStateMock.Object, _loggerMock.Object);
+    }
 
     /// <summary>
     /// <see cref="ElevatorController.Id"/> 应返回注入的 <see cref="IElevatorState.Id"/>
@@ -598,7 +600,7 @@ public sealed class ElevatorControllerTests
 
         var time = controller.PredictTimeToServeExternalCall(10, Direction.Up);
 
-        Assert.True(time >= 10 * Constants.FloorTravelTimeSec + Constants.DoorOpenCloseTimeSec);
+        Assert.True(time >= (10 * Constants.FloorTravelTimeSec) + Constants.DoorOpenCloseTimeSec);
     }
 
     /// <summary>
@@ -618,7 +620,7 @@ public sealed class ElevatorControllerTests
 
         var time = controller.PredictTimeToServeExternalCall(3, Direction.Down);
 
-        Assert.True(time >= 7 * Constants.FloorTravelTimeSec + Constants.DoorOpenCloseTimeSec);
+        Assert.True(time >= (7 * Constants.FloorTravelTimeSec) + Constants.DoorOpenCloseTimeSec);
     }
 
     /// <summary>
@@ -640,7 +642,7 @@ public sealed class ElevatorControllerTests
         var time = controller.PredictTimeToServeExternalCall(5, Direction.Up);
 
         Assert.True(time > 0);
-        Assert.True(time >= (1.0 - 0.5) * Constants.DoorOpenCloseTimeSec
+        Assert.True(time >= ((1.0 - 0.5) * Constants.DoorOpenCloseTimeSec)
             + Constants.DoorOpenWaitTimeSec
             + Constants.DoorOpenCloseTimeSec);
     }
@@ -687,9 +689,9 @@ public sealed class ElevatorControllerTests
 
         var time = controller.PredictTimeToServeExternalCall(15, Direction.Up);
 
-        Assert.True(time >= 5 * Constants.FloorTravelTimeSec
+        Assert.True(time >= (5 * Constants.FloorTravelTimeSec)
             + Constants.DoorOpenCloseTimeSec + Constants.DoorOpenWaitTimeSec + Constants.DoorOpenCloseTimeSec
-            + 10 * Constants.FloorTravelTimeSec
+            + (10 * Constants.FloorTravelTimeSec)
             + Constants.DoorOpenCloseTimeSec);
     }
 

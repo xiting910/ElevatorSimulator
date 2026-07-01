@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Client.Core;
+using ElevatorSimulator.Client.Core;
 using ElevatorSimulator.Client.Core.Interfaces;
 using ElevatorSimulator.Share.Interfaces;
 using ElevatorSimulator.Share.Messages;
@@ -40,11 +40,14 @@ public sealed class ConnectionServiceTests
     /// <summary>
     /// 使用 Mock 依赖创建 <see cref="ConnectionService"/> 实例
     /// </summary>
-    private ConnectionService CreateService() => new(
+    private ConnectionService CreateService()
+    {
+        return new(
         _factoryMock.Object,
         _messengerMock.Object,
         _stateMock.Object,
         _loggerMock.Object);
+    }
 
     /// <summary>
     /// 未连接时 <see cref="ConnectionService.Stream"/> 应为 <see langword="null"/>

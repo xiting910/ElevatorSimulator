@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -63,7 +63,10 @@ file static class Program
     /// </summary>
     /// <param name="sender">事件发送者</param>
     /// <param name="e">线程异常事件参数</param>
-    private static void OnThreadException(object sender, ThreadExceptionEventArgs e) => _ = MessageBox.Show($"发生未处理的线程异常: {e.Exception.Message}", "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+    {
+        _ = MessageBox.Show($"发生未处理的线程异常: {e.Exception.Message}", "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
 
     /// <summary>
     /// 处理未处理的应用程序异常

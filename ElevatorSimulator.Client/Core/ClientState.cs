@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ElevatorSimulator.Client.Core;
 
@@ -37,10 +37,16 @@ public sealed class ClientState : Interfaces.IClientState
     }
 
     /// <inheritdoc/>
-    public bool CanExitElevator() => CurrentElevatorId is int elevatorId && elevatorId >= 0 && elevatorId < ElevatorStatuses.Length && ElevatorStatuses[elevatorId].Door is DoorState.Open;
+    public bool CanExitElevator()
+    {
+        return CurrentElevatorId is int elevatorId && elevatorId >= 0 && elevatorId < ElevatorStatuses.Length && ElevatorStatuses[elevatorId].Door is DoorState.Open;
+    }
 
     /// <inheritdoc/>
-    public bool HasActiveCall(Direction direction) => FloorStatus.ActiveCalls.TryGetValue(CurrentFloor, out var dirs) && dirs.Contains(direction);
+    public bool HasActiveCall(Direction direction)
+    {
+        return FloorStatus.ActiveCalls.TryGetValue(CurrentFloor, out var dirs) && dirs.Contains(direction);
+    }
 
     /// <inheritdoc/>
     public void UpdateElevatorStatus(Messages.ElevatorStatusMessage status)

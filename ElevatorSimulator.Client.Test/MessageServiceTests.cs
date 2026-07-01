@@ -1,4 +1,4 @@
-﻿using ElevatorSimulator.Client.Core;
+using ElevatorSimulator.Client.Core;
 using ElevatorSimulator.Client.Core.Interfaces;
 using ElevatorSimulator.Share.Enums;
 using ElevatorSimulator.Share.Interfaces;
@@ -33,10 +33,13 @@ public sealed class MessageServiceTests
     /// <summary>
     /// 使用 Mock 依赖创建 <see cref="MessageService"/> 实例
     /// </summary>
-    private MessageService CreateService() => new(
+    private MessageService CreateService()
+    {
+        return new(
         _messengerMock.Object,
         _streamAccessorMock.Object,
         _loggerMock.Object);
+    }
 
     /// <summary>
     /// 当 Stream 为 <see langword="null"/> 时, 发送操作应静默返回不抛异常

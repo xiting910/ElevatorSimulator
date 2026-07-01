@@ -1,4 +1,4 @@
-﻿namespace ElevatorSimulator.Server.Core.MessageHandlers;
+namespace ElevatorSimulator.Server.Core.MessageHandlers;
 
 /// <summary>
 /// 外部呼叫消息处理器
@@ -6,8 +6,14 @@
 public sealed class ExternalCallHandler : Interfaces.IMessageHandler<Messages.ExternalCallMessage>
 {
     /// <inheritdoc />
-    void Interfaces.IMessageHandler.Handle(Messages.Message msg, Interfaces.IElevatorManager elevatorManager) => Handle((Messages.ExternalCallMessage)msg, elevatorManager);
+    void Interfaces.IMessageHandler.Handle(Messages.Message msg, Interfaces.IElevatorManager elevatorManager)
+    {
+        Handle((Messages.ExternalCallMessage)msg, elevatorManager);
+    }
 
     /// <inheritdoc />
-    public void Handle(Messages.ExternalCallMessage msg, Interfaces.IElevatorManager elevatorManager) => elevatorManager.AddFloorCall(msg.Floor, msg.Direction);
+    public void Handle(Messages.ExternalCallMessage msg, Interfaces.IElevatorManager elevatorManager)
+    {
+        elevatorManager.AddFloorCall(msg.Floor, msg.Direction);
+    }
 }

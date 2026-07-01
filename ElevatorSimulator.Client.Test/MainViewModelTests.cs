@@ -41,13 +41,19 @@ public sealed class MainViewModelTests
     /// <see cref="MainViewModel.ClientId"/> 应返回 <see cref="IClientState.ClientId"/>
     /// </summary>
     [Fact]
-    public void ClientId_ReturnsStateClientId() => Assert.Equal("test-client", _vm.ClientId);
+    public void ClientId_ReturnsStateClientId()
+    {
+        Assert.Equal("test-client", _vm.ClientId);
+    }
 
     /// <summary>
     /// 初始化后 <see cref="MainViewModel.Status"/> 应为 <see cref="ConnectionStatus.Connecting"/>
     /// </summary>
     [Fact]
-    public void Status_InitialValue_IsConnecting() => Assert.Equal(ConnectionStatus.Connecting, _vm.Status);
+    public void Status_InitialValue_IsConnecting()
+    {
+        Assert.Equal(ConnectionStatus.Connecting, _vm.Status);
+    }
 
     /// <summary>
     /// 启用连接时, 状态应变为 Connecting 并触发连接和状态变更事件
