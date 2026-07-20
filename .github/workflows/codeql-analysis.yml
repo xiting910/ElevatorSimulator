@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # CodeQL 代码安全分析工作流: 分析 C# 代码, 触发时机为 push、PR 和每周定时
 # =============================================================================
 name: CodeQL Analysis
@@ -41,7 +41,7 @@ jobs:
 
             # 安装 .NET 10 SDK, CodeQL autobuild 需要它
             - name: Setup .NET SDK
-              uses: actions/setup-dotnet@v5
+              uses: actions/setup-dotnet@v6
               with:
                   dotnet-version: 10.0.x
                   cache: true
