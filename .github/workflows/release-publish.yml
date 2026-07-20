@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # Release 发布工作流: 推送 tag 时自动构建、测试、发布到 GitHub Release
 # =============================================================================
 name: Release Publish
@@ -29,7 +29,7 @@ jobs:
 
             # 2. 安装 .NET 10 SDK
             - name: Setup .NET SDK
-              uses: actions/setup-dotnet@v5
+              uses: actions/setup-dotnet@v6
               with:
                   dotnet-version: 10.0.x
                   cache: true
